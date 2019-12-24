@@ -1,0 +1,21 @@
+{
+  "name": "electron-ts-demo",
+  "version": "1.0.0",
+  "description": "An Electron application written with Typescript",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "start": "npm run build && electron ./dist/main.js"
+  },
+  "keywords": [
+    "Electron",
+    "typescript"
+  ],
+  "author": "LegendLeo",
+  "devDependencies": {
+    "electron": "^6.0.8",
+    "tslint": "^5.19.0",
+    "typescript": "^3.7.4"
+  }
+}
