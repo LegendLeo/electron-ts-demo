@@ -1,54 +1,61 @@
-import { app, BrowserWindow } from 'electron'
+import { app, ipcMain, BrowserWindow } from 'electron'
 import * as path from 'path'
 
 let mainWindow: Electron.BrowserWindow
 
+// 创建窗口
 function createWindow() {
-  // Create the browser window.
   mainWindow = new BrowserWindow({
-    height: 600,
+    width: 1200,
+    height: 720,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
-    },
-    width: 800
+      nodeIntegration: true
+    }
   })
 
-  // and load the index.html of the app.
-  mainWindow.loadFile(path.join(__dirname, '../src/index.html'))
+  // 加载首页
+  mainWindow.loadFile(path.join(__dirname, '../src/renderer/index.html'))
 
-  // Open the DevTools.
+  // 打开控制台
   mainWindow.webContents.openDevTools()
 
-  // Emitted when the window is closed.
+  // 当主窗口关闭触发
   mainWindow.on('closed', () => {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
+    // 取消引用Window对象，如果你的应用程序支持多窗口，
+    // 通常会将窗口存储在一个数组中，此时应该删除相应的元素
     mainWindow = null
   })
+
+  // 接收添加音乐窗口事件
+  ipcMain.on('addMusicWindow', createAddMusicWindow)
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
+// 当Electron完成初始化并准备创建浏览器窗口时，将调用此方法。
+// 有些接口只有在此事件发生后才能使用
 app.on('ready', createWindow)
 
-// Quit when all windows are closed.
+// 当所有窗口关闭后退出应用
 app.on('window-all-closed', () => {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
+  // 在OSX上，应用以及其工具栏通常会一直保持活跃状态，直到用于通过Cmd + Q退出
   if (process.platform !== 'darwin') {
     app.quit()
   }
 })
 
 app.on('activate', () => {
-  // On OS X it"s common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
+  // 在OSX上，当点击停靠图标并且没有其他窗口打开时，通常需要在应用程序中重新创建窗口
+  if (!mainWindow) {
     createWindow()
   }
 })
 
-// In this file you can include the rest of your app"s specific main process
-// code. You can also put them in separate files and require them here.
+function createAddMusicWindow():void {
+  let addMusicWindow: Electron.BrowserWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      nodeIntegration: true
+    }
+  })
+  addMusicWindow.loadFile('../src/renderer/add-music/index.html')
+}
