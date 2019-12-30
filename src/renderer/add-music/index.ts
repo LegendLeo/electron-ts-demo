@@ -2,7 +2,7 @@ import { ipcRenderer } from 'electron'
 import { $ } from '../../utils'
 import { basename } from 'path'
 
-let musicFilePaths = []
+let musicFilePaths: string[] = []
 
 $('btn-select').addEventListener('click', () => {
   ipcRenderer.send('selectMusic')
@@ -21,4 +21,8 @@ ipcRenderer.on('selectedFile', (event, files: filesObj) => {
     <ul class="list-group">${musicListHtml}</ul>
   `
   musicFilePaths = files.filePaths
+})
+
+$('add-music').addEventListener('click', () => {
+  ipcRenderer.send('addTracks', musicFilePaths)
 })

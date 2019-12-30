@@ -1,5 +1,8 @@
 import { app, ipcMain, dialog } from 'electron'
 import { createWindow } from './utils'
+import { DataStore } from './utils'
+
+const dataStore = new DataStore({ name: 'MusicData' })
 
 let mainWindow: Electron.BrowserWindow
 
@@ -18,28 +21,6 @@ function initWindow() {
     // 取消引用Window对象，如果你的应用程序支持多窗口，
     // 通常会将窗口存储在一个数组中，此时应该删除相应的元素
     mainWindow = null
-  })
-
-  // 接收添加音乐窗口事件
-  ipcMain.on('addMusicWindow', () => {
-    let addMusicWindow = createWindow('../src/renderer/add-music/index.html')
-    addMusicWindow.webContents.openDevTools()
-  })
-
-  ipcMain.on('selectMusic', event => {
-    dialog
-      .showOpenDialog({
-        properties: ['multiSelections', 'openFile'],
-        filters: [
-          {
-            name: 'Music',
-            extensions: ['mp3']
-          }
-        ]
-      })
-      .then(files => {
-        event.sender.send('selectedFile', files)
-      })
   })
 }
 
@@ -60,4 +41,31 @@ app.on('activate', () => {
   if (!mainWindow) {
     initWindow()
   }
+})
+
+// 接收添加音乐窗口事件
+ipcMain.on('addMusicWindow', () => {
+  let addMusicWindow = createWindow('../src/renderer/add-music/index.html')
+  addMusicWindow.webContents.openDevTools()
+})
+
+ipcMain.on('selectMusic', event => {
+  dialog
+    .showOpenDialog({
+      properties: ['multiSelections', 'openFile'],
+      filters: [
+        {
+          name: 'Music',
+          extensions: ['mp3']
+        }
+      ]
+    })
+    .then(files => {
+      event.sender.send('selectedFile', files)
+    })
+})
+
+ipcMain.on('addTracks', (event, tracks) => {
+  let data: string[] = dataStore.addTracks(tracks).getTracks()
+  console.log(data)
 })
