@@ -1,4 +1,4 @@
-import { app, ipcMain, BrowserWindow } from 'electron'
+import { app, ipcMain, dialog } from 'electron'
 import { createWindow } from './utils'
 
 let mainWindow: Electron.BrowserWindow
@@ -23,6 +23,23 @@ function initWindow() {
   // 接收添加音乐窗口事件
   ipcMain.on('addMusicWindow', () => {
     let addMusicWindow = createWindow('../src/renderer/add-music/index.html')
+    addMusicWindow.webContents.openDevTools()
+  })
+
+  ipcMain.on('selectMusic', event => {
+    dialog
+      .showOpenDialog({
+        properties: ['multiSelections', 'openFile'],
+        filters: [
+          {
+            name: 'Music',
+            extensions: ['mp3']
+          }
+        ]
+      })
+      .then(files => {
+        event.sender.send('selectedFile', files)
+      })
   })
 }
 
