@@ -1,4 +1,7 @@
 import { BrowserWindow } from 'electron'
+import { basename } from 'path'
+const Store = require('electron-store')
+const uuid = require('uuid/v4')
 
 export function $(str: string): HTMLElement {
   return document.getElementById(str)
@@ -48,4 +51,29 @@ export function createWindow(
     window.show()
   })
   return window
+}
+
+
+export class DataStore extends Store {
+  constructor(options: object) {
+    super(options)
+    this.tracks = this.getTracks()
+  }
+  addTracks(tracks: string[]) {
+    tracks = Array.from(new Set(tracks))
+    const tracksWithProps = tracks.map(path => ({
+      id: uuid(),
+      path,
+      fileName: basename(path)
+    }))
+    this.tracks = [...this.tracks, ...tracksWithProps]
+    return this.saveTracks()
+  }
+  getTracks() {
+    return this.get('tracks') || []
+  }
+  saveTracks() {
+    this.set('tracks', this.tracks)
+    return this
+  }
 }
