@@ -2,6 +2,8 @@ import { app, ipcMain, dialog } from 'electron'
 import { createWindow } from './utils'
 import { DataStore } from './utils'
 
+// require('electron-reload')(__dirname)
+
 const dataStore = new DataStore({ name: 'MusicData' })
 
 let mainWindow: Electron.BrowserWindow
@@ -16,6 +18,10 @@ function initWindow() {
   // 打开控制台
   mainWindow.webContents.openDevTools()
 
+  mainWindow.webContents.on('did-finish-load', () => {
+    mainWindow.webContents.send('getTracks', dataStore.getTracks())
+    console.log('loaded')
+  })
   // 当主窗口关闭触发
   mainWindow.on('closed', () => {
     // 取消引用Window对象，如果你的应用程序支持多窗口，
@@ -67,5 +73,6 @@ ipcMain.on('selectMusic', event => {
 
 ipcMain.on('addTracks', (event, tracks) => {
   let data: string[] = dataStore.addTracks(tracks).getTracks()
-  console.log(data)
+
+  mainWindow.webContents.send('getTracks', data)
 })
