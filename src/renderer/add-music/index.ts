@@ -24,5 +24,5 @@ ipcRenderer.on('selectedFile', (event, files: filesObj) => {
 })
 
 $('add-music').addEventListener('click', () => {
-  ipcRenderer.send('addTracks', musicFilePaths)
+  ipcRenderer.send('addMusic', musicFilePaths)
 })

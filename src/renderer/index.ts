@@ -1,11 +1,6 @@
 import { ipcRenderer } from 'electron'
 import { $ } from '../utils'
-
-interface Track {
-  fileName: string
-  id: string
-  path: string
-}
+import { Track } from '../utils/interface'
 
 let allTracks: Track[] = []
 let musicAudio: HTMLAudioElement = new Audio()
@@ -67,6 +62,7 @@ $('tracksList').addEventListener('click', (event: MouseEvent) => {
         classList.replace('fa-pause', 'fa-play')
       } else if (classList.contains('fa-trash-alt')) {
         // 发送删除音乐事件
+        ipcRenderer.send('deleteMusic', id)
       }
     }
   }

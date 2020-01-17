@@ -1,8 +1,7 @@
 import { app, ipcMain, dialog } from 'electron'
 import { createWindow } from './utils'
 import { DataStore } from './utils'
-
-// require('electron-reload')(__dirname)
+import { Track } from './utils/interface'
 
 const dataStore = new DataStore({ name: 'MusicData' })
 
@@ -71,8 +70,12 @@ ipcMain.on('selectMusic', event => {
     })
 })
 
-ipcMain.on('addTracks', (event, tracks) => {
-  let data: string[] = dataStore.addTracks(tracks).getTracks()
+ipcMain.on('addMusic', (event, tracks) => {
+  let data: Track[] = dataStore.addTracks(tracks).getTracks()
+  mainWindow.webContents.send('getTracks', data)
+})
 
+ipcMain.on('deleteMusic', (event, id: string) => {
+  const data: Track = dataStore.deleteTracks(id).getTracks()
   mainWindow.webContents.send('getTracks', data)
 })
