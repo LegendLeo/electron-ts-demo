@@ -1,5 +1,6 @@
 import { BrowserWindow } from 'electron'
 import { basename } from 'path'
+import { Track } from './interface'
 const Store = require('electron-store')
 const uuid = require('uuid/v4')
 
@@ -37,13 +38,22 @@ export class DataStore extends Store {
     this.tracks = this.getTracks()
   }
   addTracks(tracks: string[]) {
-    tracks = Array.from(new Set(tracks))
-    const tracksWithProps = tracks.map(path => ({
-      id: uuid(),
-      path,
-      fileName: basename(path)
-    }))
+    // 对准备导出的音乐做去重处理，判断文件名是否已经在tracks里
+    const tracksWithProps: Track[] = tracks.reduce((total, curTrack) => {
+      if (this.tracks.every((item: Track) => item.fileName !== basename(curTrack))) {
+        total.push({
+          id: uuid(),
+          path: curTrack,
+          fileName: basename(curTrack)
+        })
+      }
+      return total
+    }, [])
     this.tracks = [...this.tracks, ...tracksWithProps]
+    return this.saveTracks()
+  }
+  deleteTracks(id: string) {
+    this.tracks = this.tracks.filter((item: Track) => item.id !== id)
     return this.saveTracks()
   }
   getTracks() {
