@@ -1,3 +1,11 @@
 #tracksList .col-2 .fas:hover {
   cursor: pointer;
 }
+
+#progress {
+  cursor: pointer;
+}
+
+.progress-bar {
+  transition: 0.2s ease;
+}

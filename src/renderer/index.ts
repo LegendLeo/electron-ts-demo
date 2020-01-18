@@ -10,6 +10,7 @@ $('btn-add-music').addEventListener('click', () => {
   ipcRenderer.send('addMusicWindow', () => {})
 })
 
+// 渲染音乐列表
 const renderTrackList = (tracks: Track[]): void => {
   const emptyHtml = '<div class="alert alert-primary">还没有添加任何音乐</div>'
   const listHtml = tracks.reduce((html, track) => {
@@ -35,12 +36,14 @@ ipcRenderer.on('getTracks', (event, tracks: Track[]) => {
   renderTrackList(tracks)
 })
 
+// 为了性能，使用了冒泡的原理将时间绑定在父级元素，判断点击的元素，分别做不同处理
 $('tracksList').addEventListener('click', (event: MouseEvent) => {
   event.preventDefault()
   if (event.target instanceof HTMLElement) {
     const { dataset, classList } = event.target
     const id = dataset && dataset.id
     if (id) {
+      // 如果点击的是播放
       if (classList.contains('fa-play')) {
         if (curTrack && curTrack.id === id) {
           // 如果点击的是之前播放的，直接继续播放
@@ -58,12 +61,52 @@ $('tracksList').addEventListener('click', (event: MouseEvent) => {
         // 转换播放状态
         classList.replace('fa-play', 'fa-pause')
       } else if (classList.contains('fa-pause')) {
+        // 如果点击的是暂停，暂停音乐播放，切换按钮
         musicAudio.pause()
         classList.replace('fa-pause', 'fa-play')
       } else if (classList.contains('fa-trash-alt')) {
-        // 发送删除音乐事件
+        // 如果点击的是删除，发送删除音乐事件
         ipcRenderer.send('deleteMusic', id)
       }
     }
   }
+})
+
+// 转化时间
+const formatTime = (time: number) => {
+  let min = '' + Math.floor(time / 60)
+  min = min.padStart(2, '0')
+  let sec = '' + Math.floor(time % 60)
+  sec = sec.padStart(2, '0')
+  return `${min}:${sec}`
+}
+
+// 渲染音乐播放器
+const renderMusicPlayer = (name: string, duration: number): void => {
+  $('player-status').innerHTML = `<div class="col font-weight-bold">
+      正在播放：${name}
+    </div>
+    <div class="col">
+      <span id="current-seeker">00:00</span> / ${formatTime(duration)}
+    </div>`
+}
+
+// 监听加载音乐事件，加载音乐同时渲染音乐文件名和时间
+musicAudio.addEventListener('loadedmetadata', () => {
+  renderMusicPlayer(curTrack.fileName, musicAudio.duration)
+})
+
+// 监听音乐播放时间，处理进度条
+musicAudio.addEventListener('timeupdate', () => {
+  $('current-seeker').innerHTML = formatTime(musicAudio.currentTime)
+  let progress = (musicAudio.currentTime / musicAudio.duration) * 100
+  $('player-progress').style.width = progress + '%'
+})
+
+// 点击进度条进到相应的播放进度
+$('progress').addEventListener('click', (event: MouseEvent) => {
+  if (!curTrack) return
+  const fullProgress = $('progress').clientWidth
+  let progress = event.offsetX / fullProgress
+  musicAudio.currentTime = progress * musicAudio.duration
 })
