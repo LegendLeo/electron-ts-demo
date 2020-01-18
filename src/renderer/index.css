@@ -1,5 +1,21 @@
+body {
+  background: linear-gradient(to right, #acb6e5, #74ebd5);
+}
+
+h1 {
+  color: #ffffff;
+}
+
 #tracksList .col-2 .fas:hover {
   cursor: pointer;
+}
+
+.fixed-bottom {
+  background: transparent;
+}
+
+#player-status {
+  color: #ffffff;
 }
 
 #progress {
