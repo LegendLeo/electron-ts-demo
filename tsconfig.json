@@ -3,7 +3,7 @@
     "module": "commonjs",
     "noImplicitAny": true,
     "sourceMap": true,
-    "outDir": "dist",
+    "outDir": "output",
     "baseUrl": ".",
     "target": "ES6",
     "paths": {
