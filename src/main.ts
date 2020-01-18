@@ -9,7 +9,7 @@ let mainWindow: Electron.BrowserWindow
 
 // 创建窗口
 function initWindow() {
-  mainWindow = createWindow('../src/renderer/index.html', {
+  mainWindow = createWindow('./templates/index.html', {
     width: 1200,
     height: 800
   })
@@ -50,7 +50,7 @@ app.on('activate', () => {
 
 // 接收添加音乐窗口事件
 ipcMain.on('addMusicWindow', () => {
-  let addMusicWindow = createWindow('../src/renderer/add-music/index.html')
+  let addMusicWindow = createWindow('./templates/add-music.html')
   addMusicWindow.webContents.openDevTools()
 })
 
