@@ -3,10 +3,64 @@
   "version": "1.0.0",
   "description": "An Electron application written with Typescript",
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
+    "build": "tsc && npm run copy",
+    "watch": "tsc -w && npm run copy",
     "lint": "tslint -c tslint.json -p tsconfig.json",
-    "start": "npm run build && electron ./dist/main.js"
+    "start": "npm run build && npm run copy && electron ./output/main.js",
+    "dist": "electron-builder",
+    "copy": "cp -r src/templates output"
+  },
+  "main": "output/main.js",
+  "build": {
+    "appId": "MyElectronMusicPlayer",
+    "asar": true,
+    "dmg": {
+      "icon": "build/icon.icns",
+      "iconSize": 100,
+      "contents": [
+        {
+          "x": 380,
+          "y": 280,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 110,
+          "y": 280,
+          "type": "file"
+        }
+      ]
+    },
+    "mac": {
+      "category": "public.app-category.productivity"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis-web",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "artifactName": "Leo音乐播放器",
+      "publisherName": "HuQing"
+    },
+    "linux": {
+      "category": "Chat;GNOME;GTK;Network;InstantMessaging",
+      "packageCategory": "GNOME;GTK;Network;InstantMessaging",
+      "description": "Zulip Desktop Client for Linux",
+      "target": [
+        "deb",
+        "zip",
+        "AppImage",
+        "snap"
+      ],
+      "maintainer": "Leo <hqyx45@gmail.com>",
+      "artifactName": "Leo音乐播放器"
+    }
   },
   "keywords": [
     "Electron",
@@ -15,6 +69,7 @@
   "author": "LegendLeo",
   "devDependencies": {
     "electron": "^6.0.8",
+    "electron-builder": "^22.2.0",
     "tslint": "^5.19.0",
     "typescript": "^3.7.4"
   },
