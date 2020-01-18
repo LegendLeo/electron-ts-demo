@@ -45,6 +45,9 @@ $('tracksList').addEventListener('click', (event: MouseEvent) => {
     if (id) {
       // 如果点击的是播放
       if (classList.contains('fa-play')) {
+        if($('progress').hidden) {
+          $('progress').removeAttribute('hidden')
+        }
         if (curTrack && curTrack.id === id) {
           // 如果点击的是之前播放的，直接继续播放
           musicAudio.play()
@@ -83,10 +86,10 @@ const formatTime = (time: number) => {
 
 // 渲染音乐播放器
 const renderMusicPlayer = (name: string, duration: number): void => {
-  $('player-status').innerHTML = `<div class="col font-weight-bold">
+  $('player-status').innerHTML = `<div class="col-8 font-weight-bold">
       正在播放：${name}
     </div>
-    <div class="col">
+    <div class="col-4">
       <span id="current-seeker">00:00</span> / ${formatTime(duration)}
     </div>`
 }
