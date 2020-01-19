@@ -12,6 +12,7 @@
   },
   "main": "output/main.js",
   "build": {
+    "productName": "MyElectronMusicPlayer",
     "appId": "MyElectronMusicPlayer",
     "asar": true,
     "dmg": {
@@ -31,13 +32,16 @@
         }
       ]
     },
+    "electronDownload": {
+      "mirror": "https://npm.taobao.org/mirrors/electron/"
+    },
     "mac": {
       "category": "public.app-category.productivity"
     },
     "win": {
       "target": [
         {
-          "target": "nsis-web",
+          "target": "nsis",
           "arch": [
             "x64",
             "ia32"
@@ -45,8 +49,13 @@
         }
       ],
       "icon": "build/icon.ico",
-      "artifactName": "Leo音乐播放器",
+      "artifactName": "Leo音乐播放器.exe",
       "publisherName": "HuQing"
+    },
+    "nsis": {
+      "allowToChangeInstallationDirectory": true,
+      "oneClick": false,
+      "perMachine": false
     },
     "linux": {
       "category": "Chat;GNOME;GTK;Network;InstantMessaging",
